@@ -170,45 +170,149 @@ def profile_examples(profile: Dict[str, Any]) -> Dict[str, str]:
     return dict(profile.get("example_hints") or {})
 
 
-def discover_usable_models() -> List[str]:
-    """Return the currently usable model list.
+AUTO_MODEL_LABEL = "Auto"
+AUTO_MODEL_DESCRIPTION = "Let me choose the best ChatGPT-subscription model for this job."
+ALLOWED_MODEL_AUTH_TYPES = {
+    "api_key",
+    "oauth_device_code",
+    "oauth_external",
+    "oauth_minimax",
+    "vertex",
+}
+CHATGPT_MODEL_RANKING = [
+    "openai/gpt-5.6-terra-pro",
+    "openai/gpt-5.6-luna-pro",
+    "openai/gpt-5.6-terra",
+    "openai/gpt-5.6-luna",
+    "openai/gpt-5.5-pro",
+    "openai/gpt-5.5",
+    "openai/gpt-5.4",
+    "openai/gpt-5.4-mini",
+    "gpt-5.6-terra-pro",
+    "gpt-5.6-luna-pro",
+    "gpt-5.6-terra",
+    "gpt-5.6-luna",
+    "gpt-5.5-pro",
+    "gpt-5.5",
+    "gpt-5.4",
+    "gpt-5.4-mini",
+]
 
-    Priority:
-    1) Hermes's configured + live-usable provider catalogs
-    2) Config fallback list from config.yaml
 
-    This refreshes on each call so the picker stays aligned with the current
-    authenticated providers and their live catalogs.
-    """
+def _credentialed_provider_rows() -> List[Dict[str, Any]]:
+    """Return provider rows that are backed by explicit API-key or OAuth credentials."""
     if HERMES_AGENT_ROOT.exists():
         agent_root = str(HERMES_AGENT_ROOT)
         if agent_root not in sys.path:
             sys.path.insert(0, agent_root)
-    try:
-        from hermes_cli.inventory import build_models_payload, load_picker_context
+    from hermes_cli.auth import PROVIDER_REGISTRY
+    from hermes_cli.inventory import build_models_payload, load_picker_context
 
-        ctx = load_picker_context()
-        payload = build_models_payload(
-            ctx,
-            explicit_only=True,
-            refresh=True,
-            probe_custom_providers=False,
-            probe_current_custom_provider=True,
-        )
-        models: List[str] = []
-        seen = set()
-        for provider in payload.get("providers", []):
+    ctx = load_picker_context()
+    payload = build_models_payload(
+        ctx,
+        explicit_only=True,
+        refresh=True,
+        probe_custom_providers=False,
+        probe_current_custom_provider=True,
+    )
+    rows: List[Dict[str, Any]] = []
+    seen: set[str] = set()
+    for provider in payload.get("providers", []):
+        slug = str(provider.get("slug", "")).strip().lower()
+        if not slug or slug in seen:
+            continue
+        if slug == "moa":
+            continue
+        if provider.get("is_user_defined"):
+            rows.append(provider)
+            seen.add(slug)
+            continue
+        pconfig = PROVIDER_REGISTRY.get(slug)
+        if pconfig and pconfig.auth_type in ALLOWED_MODEL_AUTH_TYPES:
+            rows.append(provider)
+            seen.add(slug)
+    return rows
+
+
+def discover_usable_models() -> List[str]:
+    """Return the exact currently usable models plus a top-level Auto option.
+
+    The returned list is intentionally narrow:
+    - only providers with explicit API-key or OAuth credentials are included
+    - the synthetic `Auto` option is always first so the user can let Hermes
+      choose the best ChatGPT-subscription model for the current task
+    - fallback models from config.yaml are used only if live discovery fails
+    """
+    models: List[str] = [AUTO_MODEL_LABEL]
+    try:
+        rows = _credentialed_provider_rows()
+        seen = {AUTO_MODEL_LABEL}
+        for provider in rows:
             for model in provider.get("models", []) or []:
-                if model in seen:
+                model = str(model).strip()
+                if not model or model in seen:
                     continue
                 seen.add(model)
                 models.append(model)
-        if models:
-            logger.info("Discovered %d currently usable models", len(models))
+        if len(models) > 1:
+            logger.info("Discovered %d credential-backed models", len(models) - 1)
             return models
     except Exception:
         logger.exception("Live model discovery failed; using fallback model list")
-    return list(CONFIG.default_models)
+    fallback = [m for m in CONFIG.default_models if m and m != AUTO_MODEL_LABEL]
+    return [AUTO_MODEL_LABEL] + fallback
+
+
+def resolve_auto_model(answers: Dict[str, str]) -> str:
+    """Pick the best currently usable ChatGPT-subscription model for this job."""
+    try:
+        rows = _credentialed_provider_rows()
+    except Exception:
+        return AUTO_MODEL_LABEL
+
+    available: List[str] = []
+    seen: set[str] = set()
+    for provider in rows:
+        for model in provider.get("models", []) or []:
+            model = str(model).strip()
+            if not model or model in seen:
+                continue
+            seen.add(model)
+            available.append(model)
+
+    if not available:
+        return AUTO_MODEL_LABEL
+
+    task_blob = " ".join(
+        str(answers.get(key, ""))
+        for key in ("goal", "task_type", "input_prompt", "context", "constraints", "must_include", "must_avoid")
+    ).lower()
+
+    if any(token in task_blob for token in ("code", "coding", "debug", "refactor", "review", "test", "bug", "sql", "python", "javascript", "typescript")):
+        ranked = CHATGPT_MODEL_RANKING
+    else:
+        ranked = CHATGPT_MODEL_RANKING
+
+    for candidate in ranked:
+        if candidate in available:
+            return candidate
+
+    for model in available:
+        if model.startswith("openai/") or model.startswith("gpt-"):
+            return model
+
+    return available[0]
+
+
+def format_model_display(value: str, answers: Dict[str, str]) -> str:
+    value = (value or "").strip()
+    if value == AUTO_MODEL_LABEL:
+        resolved = resolve_auto_model(answers)
+        if resolved and resolved != AUTO_MODEL_LABEL:
+            return f"{AUTO_MODEL_LABEL} → {resolved}"
+        return AUTO_MODEL_LABEL
+    return value
 
 
 
@@ -286,7 +390,7 @@ def field_prompt(profile: Dict[str, Any], index: int) -> str:
     if hint:
         message.append(f"_Example:_ {hint}")
     if key == "model":
-        message.append("Choose from the exact model buttons below.")
+        message.append("Choose from the exact model buttons below, or use Auto to let Hermes pick the best ChatGPT subscription model for the job.")
     return "\n".join(message)
 
 
@@ -297,6 +401,8 @@ def render_prompt(data: Dict[str, str]) -> str:
         value = data.get(key, "").strip()
         if not value:
             continue
+        if key == "model":
+            value = format_model_display(value, data)
         sections.append(f"## {label}\n{value}")
     sections.append("## Final Instruction\nRewrite / improve / answer the prompt above according to the requirements.")
     return "\n\n".join(sections)
@@ -321,7 +427,7 @@ async def start_form(message: Message, state: FSMContext, bot: Bot, preset: Opti
     text = (
         f"**Prompt Form — {profile.get('label', 'Default')}**\n\n"
         f"Send each field one at a time. Reply directly to this chat; this bot is now private-chat only.\n"
-        f"I refresh the model list at run time, so the **Model** step reflects what is currently usable.\n\n"
+        f"I refresh the model list at run time, so the **Model** step only shows credential-backed models plus Auto.\n\n"
         f"{field_prompt(profile, 0)}"
     )
     reply_markup = build_force_reply()
@@ -440,7 +546,8 @@ async def on_text(message: Message, state: FSMContext, bot: Bot) -> None:
 
     key, _, _ = FIELDS[index]
     text = message.text.strip()
-    if key == "model" and text not in profile_for_chat(message.chat.id).get("available_models", CONFIG.default_models):
+    valid_models = set(discover_usable_models())
+    if key == "model" and text not in valid_models:
         # Accept free text, but in practice the keyboard should guide the choice.
         await message.answer("Tip: the model field is best picked from the exact buttons, but I’ll accept your text.")
     await store_answer(state, text)

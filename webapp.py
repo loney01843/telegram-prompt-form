@@ -39,8 +39,12 @@ def _escape(s: Any) -> str:
 def _models_options() -> str:
     models = discover_usable_models()
     if not models:
-        models = ["GPT-4.1", "Claude Sonnet 4", "Gemini 2.5 Pro"]
-    return "\n".join(f'<option value="{_escape(model)}">{_escape(model)}</option>' for model in models)
+        models = ["Auto"]
+    parts = []
+    for i, model in enumerate(models):
+        selected = ' selected' if i == 0 else ''
+        parts.append(f'<option value="{_escape(model)}"{selected}>{_escape(model)}</option>')
+    return "\n".join(parts)
 
 
 def _render_html() -> str:
@@ -97,7 +101,7 @@ def _render_html() -> str:
     <div class="card">
       <div class="badge">{_escape(WEB_APP_NAME)}</div>
       <h1>{_escape(APP_TITLE)}</h1>
-      <div class="sub">Fill the fields, preview the final prompt, and submit back to Telegram.</div>
+      <div class="sub">Fill the fields, preview the final prompt, and submit back to Telegram. Auto is preselected and resolves to the best ChatGPT-subscription model available for the job.</div>
 
       <form id="form">
         {''.join(inputs)}
@@ -165,7 +169,7 @@ def _render_html() -> str:
     document.getElementById('fillDemo').addEventListener('click', () => {{
       setForm({{
         goal: 'Improve a prompt for clarity and reliability',
-        model: 'GPT-4.1',
+        model: 'Auto',
         task_type: 'analysis',
         input_prompt: 'Draft a better prompt from this rough idea',
         context: 'Private-chat bot, concise output, privacy-safe wording',

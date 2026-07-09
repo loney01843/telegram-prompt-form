@@ -11,27 +11,13 @@ bot:
 models:
   default_list:
     # Fallback only: the bot refreshes the usable model list at runtime.
-    - GPT-4.1
-    - Claude Sonnet 4
-    - Gemini 2.5 Pro
-    - Gemini 2.5 Flash
-    - Qwen2.5
-    - Llama 3.1
-    - Image model
-    - Code model
+    - Auto
 
 profiles:
   default:
     label: Default
     available_models:
-      - GPT-4.1
-      - Claude Sonnet 4
-      - Gemini 2.5 Pro
-      - Gemini 2.5 Flash
-      - Qwen2.5
-      - Llama 3.1
-      - Image model
-      - Code model
+      - Auto
     tone_hint: concise, neutral, privacy-safe
     example_style: general
     defaults:
@@ -53,14 +39,7 @@ profiles:
   technical:
     label: Technical
     available_models:
-      - GPT-4.1
-      - Claude Sonnet 4
-      - Gemini 2.5 Pro
-      - Gemini 2.5 Flash
-      - Qwen2.5
-      - Llama 3.1
-      - Image model
-      - Code model
+      - Auto
     tone_hint: concise, technical, action-oriented
     example_style: technical
     defaults:
@@ -82,14 +61,7 @@ profiles:
   creative:
     label: Creative
     available_models:
-      - GPT-4.1
-      - Claude Sonnet 4
-      - Gemini 2.5 Pro
-      - Gemini 2.5 Flash
-      - Qwen2.5
-      - Llama 3.1
-      - Image model
-      - Code model
+      - Auto
     tone_hint: vivid, clear, composition-aware
     example_style: creative
     defaults:

@@ -4,7 +4,8 @@ A small **aiogram** bot that turns Telegram into a privacy-safe prompt intake fo
 
 ## What it does
 - Multi-step prompt collection
-- Exact model picker from a curated allow-list
+- Exact model picker from the currently credential-backed models
+- Auto mode that picks the best ChatGPT-subscription model for the job
 - Profile-aware examples without exposing raw history
 - Works in private chats only
 

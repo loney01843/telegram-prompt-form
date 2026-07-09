@@ -6,164 +6,128 @@
   <title>Telegram Prompt Form</title>
   <style>
     :root { color-scheme: dark; }
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      background: #0b1020;
-      color: #e8ecff;
-    }
-    .wrap { max-width: 960px; margin: 0 auto; padding: 20px; }
-    .card {
-      background: #121a33;
-      border: 1px solid #26345f;
-      border-radius: 16px;
-      padding: 18px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-    }
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: #0b1020; color: #e8ecff; }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 20px; }
+    .card { background: #121a33; border: 1px solid #26345f; border-radius: 16px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
     h1 { margin: 0 0 8px; font-size: 24px; }
     .sub { color: #b4bfdc; margin-bottom: 16px; }
-    .field { margin-bottom: 14px; }
-    .field label { font-weight: 700; display: block; margin-bottom: 4px; }
+    form { display: grid; gap: 14px; }
+    label { font-weight: 700; display: block; margin-bottom: 4px; }
     .help { color: #93a2cc; font-size: 13px; margin-bottom: 6px; }
-    textarea, select {
-      width: 100%; box-sizing: border-box;
-      border-radius: 12px; border: 1px solid #31406f;
-      background: #0d1430; color: #e8ecff;
-      padding: 12px; font-size: 15px;
-    }
+    textarea, select { width: 100%; box-sizing: border-box; border-radius: 12px; border: 1px solid #31406f; background: #0d1430; color: #e8ecff; padding: 12px; font-size: 15px; }
     textarea { resize: vertical; min-height: 88px; }
+    .grid { display: grid; gap: 14px; }
     .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
-    button {
-      border: 0; border-radius: 12px; padding: 12px 16px;
-      font-weight: 700; cursor: pointer;
-    }
+    button { border: 0; border-radius: 12px; padding: 12px 16px; font-weight: 700; cursor: pointer; }
     .primary { background: #7c5cff; color: white; }
     .ghost { background: #21305a; color: #e8ecff; }
-    pre {
-      white-space: pre-wrap; word-wrap: break-word;
-      background: #0a1024; border: 1px solid #27345d;
-      border-radius: 12px; padding: 14px;
-    }
+    pre { white-space: pre-wrap; word-wrap: break-word; background: #0a1024; border: 1px solid #27345d; border-radius: 12px; padding: 14px; }
     .preview { margin-top: 18px; }
-    .badge {
-      display: inline-block; margin-bottom: 12px;
-      padding: 4px 10px; border-radius: 999px;
-      background: #21305a; color: #d8e0ff; font-size: 12px;
-    }
-    .status { margin-top: 10px; color: #9aa7cd; font-size: 13px; }
-    .ok { color: #8bffb5; }
-    .warn { color: #ffca7a; }
+    .badge { display: inline-block; margin-bottom: 12px; padding: 4px 10px; border-radius: 999px; background: #21305a; color: #d8e0ff; font-size: 12px; }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card">
-      <div class="badge">Telegram Prompt Form</div>
-      <h1>Prompt builder</h1>
-      <div class="sub">Fill the fields, preview the final prompt, and send the structured payload back to Telegram.</div>
+      <div class="badge">Prompt Form</div>
+      <h1>Telegram Prompt Form</h1>
+      <div class="sub">Fill the fields, preview the final prompt, and submit back to Telegram. Auto is preselected and resolves to the best ChatGPT-subscription model available for the job.</div>
 
       <form id="form">
-        <div class="field">
-          <label for="goal">Goal</label>
-          <div class="help">What are you trying to achieve?</div>
-          <textarea id="goal" placeholder="What are you trying to achieve?"></textarea>
-        </div>
-        <div class="field">
-          <label for="model">Model</label>
-          <div class="help">Which model will receive this prompt?</div>
-          <select id="model" required>
-            <option value="">Select a model</option>
-            <option value="gpt-5.5">gpt-5.5</option>
-            <option value="gpt-5.6-terra">gpt-5.6-terra</option>
-            <option value="gpt-5.6-luna">gpt-5.6-luna</option>
-            <option value="gpt-5.4">gpt-5.4</option>
-            <option value="gpt-5.4-mini">gpt-5.4-mini</option>
-            <option value="anthropic/claude-fable-5">anthropic/claude-fable-5</option>
-            <option value="anthropic/claude-opus-4.8">anthropic/claude-opus-4.8</option>
-            <option value="anthropic/claude-sonnet-5">anthropic/claude-sonnet-5</option>
-            <option value="anthropic/claude-haiku-4.5">anthropic/claude-haiku-4.5</option>
-            <option value="openai/gpt-5.6-sol">openai/gpt-5.6-sol</option>
-            <option value="openai/gpt-5.6-sol-pro">openai/gpt-5.6-sol-pro</option>
-            <option value="openai/gpt-5.6-terra">openai/gpt-5.6-terra</option>
-            <option value="openai/gpt-5.6-terra-pro">openai/gpt-5.6-terra-pro</option>
-            <option value="openai/gpt-5.6-luna">openai/gpt-5.6-luna</option>
-            <option value="openai/gpt-5.6-luna-pro">openai/gpt-5.6-luna-pro</option>
-            <option value="openai/gpt-5.5">openai/gpt-5.5</option>
-            <option value="openai/gpt-5.5-pro">openai/gpt-5.5-pro</option>
-            <option value="openai/gpt-5.4-mini">openai/gpt-5.4-mini</option>
-            <option value="google/gemini-3-pro-preview">google/gemini-3-pro-preview</option>
-            <option value="google/gemini-3.1-pro-preview">google/gemini-3.1-pro-preview</option>
-            <option value="google/gemini-3.5-flash">google/gemini-3.5-flash</option>
-            <option value="x-ai/grok-4.5">x-ai/grok-4.5</option>
-            <option value="deepseek/deepseek-v4-pro">deepseek/deepseek-v4-pro</option>
-            <option value="deepseek/deepseek-v4-flash">deepseek/deepseek-v4-flash</option>
-            <option value="qwen/qwen3.7-max">qwen/qwen3.7-max</option>
-            <option value="qwen/qwen3.7-plus">qwen/qwen3.7-plus</option>
-            <option value="qwen/qwen3.6-35b-a3b">qwen/qwen3.6-35b-a3b</option>
-            <option value="moonshotai/kimi-k2.6">moonshotai/kimi-k2.6</option>
-            <option value="moonshotai/kimi-k2.7-code">moonshotai/kimi-k2.7-code</option>
-            <option value="minimax/minimax-m3">minimax/minimax-m3</option>
-            <option value="z-ai/glm-5.2">z-ai/glm-5.2</option>
-            <option value="z-ai/glm-5.1">z-ai/glm-5.1</option>
-            <option value="xiaomi/mimo-v2.5-pro">xiaomi/mimo-v2.5-pro</option>
-            <option value="tencent/hy3">tencent/hy3</option>
-            <option value="stepfun/step-3.7-flash">stepfun/step-3.7-flash</option>
-            <option value="nvidia/nemotron-3-super-120b-a12b">nvidia/nemotron-3-super-120b-a12b</option>
-            <option value="sakana/fugu-ultra">sakana/fugu-ultra</option>
-            <option value="tencent/hy3:free">tencent/hy3:free</option>
-            <option value="stepfun/step-3.7-flash:free">stepfun/step-3.7-flash:free</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="task_type">Task Type</label>
-          <div class="help">What kind of task is this?</div>
-          <textarea id="task_type" placeholder="What kind of task is this?"></textarea>
-        </div>
-        <div class="field">
-          <label for="input_prompt">Input Prompt</label>
-          <div class="help">Paste the raw prompt or source material here.</div>
-          <textarea id="input_prompt" placeholder="Paste the raw prompt or source material here."></textarea>
-        </div>
-        <div class="field">
-          <label for="context">Context</label>
-          <div class="help">Any background information the model needs to know.</div>
-          <textarea id="context" placeholder="Any background information the model needs to know."></textarea>
-        </div>
-        <div class="field">
-          <label for="constraints">Constraints</label>
-          <div class="help">List any length, tone, privacy, safety, budget, or latency limits.</div>
-          <textarea id="constraints" placeholder="List any length, tone, privacy, safety, budget, or latency limits."></textarea>
-        </div>
-        <div class="field">
-          <label for="audience">Audience</label>
-          <div class="help">Who is the output for?</div>
-          <textarea id="audience" placeholder="Who is the output for?"></textarea>
-        </div>
-        <div class="field">
-          <label for="desired_output_style">Desired Output Style</label>
-          <div class="help">What should the response feel like?</div>
-          <textarea id="desired_output_style" placeholder="What should the response feel like?"></textarea>
-        </div>
-        <div class="field">
-          <label for="must_include">Must Include</label>
-          <div class="help">Anything that must stay in the final prompt/output.</div>
-          <textarea id="must_include" placeholder="Anything that must stay in the final prompt/output."></textarea>
-        </div>
-        <div class="field">
-          <label for="must_avoid">Must Avoid</label>
-          <div class="help">Anything that must not appear.</div>
-          <textarea id="must_avoid" placeholder="Anything that must not appear."></textarea>
-        </div>
-        <div class="field">
-          <label for="quality_bar">Quality Bar</label>
-          <div class="help">What does a good result look like?</div>
-          <textarea id="quality_bar" placeholder="What does a good result look like?"></textarea>
-        </div>
-        <div class="field">
-          <label for="optional">Optional</label>
-          <div class="help">Examples, fallback behavior, keywords to preserve, or notes.</div>
-          <textarea id="optional" placeholder="Examples, fallback behavior, keywords to preserve, or notes."></textarea>
-        </div>
+        
+            <label for="goal">Goal</label>
+            <div class="help">What are you trying to achieve?</div>
+            <textarea id="goal" name="goal" rows="3" placeholder="What are you trying to achieve?"></textarea>
+            
+            <label for="model">Model</label>
+            <div class="help">Which model will receive this prompt?</div>
+            
+            <select id="model" name="model" required>
+              <option value="">Select a model</option>
+              <option value="Auto" selected>Auto</option>
+<option value="gpt-5.5">gpt-5.5</option>
+<option value="gpt-5.6-sol">gpt-5.6-sol</option>
+<option value="gpt-5.6-terra">gpt-5.6-terra</option>
+<option value="gpt-5.6-luna">gpt-5.6-luna</option>
+<option value="gpt-5.4">gpt-5.4</option>
+<option value="gpt-5.4-mini">gpt-5.4-mini</option>
+<option value="anthropic/claude-fable-5">anthropic/claude-fable-5</option>
+<option value="anthropic/claude-opus-4.8">anthropic/claude-opus-4.8</option>
+<option value="anthropic/claude-sonnet-5">anthropic/claude-sonnet-5</option>
+<option value="anthropic/claude-haiku-4.5">anthropic/claude-haiku-4.5</option>
+<option value="openai/gpt-5.6-sol">openai/gpt-5.6-sol</option>
+<option value="openai/gpt-5.6-sol-pro">openai/gpt-5.6-sol-pro</option>
+<option value="openai/gpt-5.6-terra">openai/gpt-5.6-terra</option>
+<option value="openai/gpt-5.6-terra-pro">openai/gpt-5.6-terra-pro</option>
+<option value="openai/gpt-5.6-luna">openai/gpt-5.6-luna</option>
+<option value="openai/gpt-5.6-luna-pro">openai/gpt-5.6-luna-pro</option>
+<option value="openai/gpt-5.5">openai/gpt-5.5</option>
+<option value="openai/gpt-5.5-pro">openai/gpt-5.5-pro</option>
+<option value="openai/gpt-5.4-mini">openai/gpt-5.4-mini</option>
+<option value="google/gemini-3-pro-preview">google/gemini-3-pro-preview</option>
+<option value="google/gemini-3.1-pro-preview">google/gemini-3.1-pro-preview</option>
+<option value="google/gemini-3.5-flash">google/gemini-3.5-flash</option>
+<option value="x-ai/grok-4.5">x-ai/grok-4.5</option>
+<option value="deepseek/deepseek-v4-pro">deepseek/deepseek-v4-pro</option>
+<option value="deepseek/deepseek-v4-flash">deepseek/deepseek-v4-flash</option>
+<option value="qwen/qwen3.7-max">qwen/qwen3.7-max</option>
+<option value="qwen/qwen3.7-plus">qwen/qwen3.7-plus</option>
+<option value="qwen/qwen3.6-35b-a3b">qwen/qwen3.6-35b-a3b</option>
+<option value="moonshotai/kimi-k2.6">moonshotai/kimi-k2.6</option>
+<option value="moonshotai/kimi-k2.7-code">moonshotai/kimi-k2.7-code</option>
+<option value="minimax/minimax-m3">minimax/minimax-m3</option>
+<option value="z-ai/glm-5.2">z-ai/glm-5.2</option>
+<option value="z-ai/glm-5.1">z-ai/glm-5.1</option>
+<option value="xiaomi/mimo-v2.5-pro">xiaomi/mimo-v2.5-pro</option>
+<option value="tencent/hy3">tencent/hy3</option>
+<option value="stepfun/step-3.7-flash">stepfun/step-3.7-flash</option>
+<option value="nvidia/nemotron-3-super-120b-a12b">nvidia/nemotron-3-super-120b-a12b</option>
+<option value="sakana/fugu-ultra">sakana/fugu-ultra</option>
+<option value="tencent/hy3:free">tencent/hy3:free</option>
+<option value="stepfun/step-3.7-flash:free">stepfun/step-3.7-flash:free</option>
+            </select>
+            
+            
+            <label for="task_type">Task Type</label>
+            <div class="help">What kind of task is this?</div>
+            <textarea id="task_type" name="task_type" rows="3" placeholder="What kind of task is this?"></textarea>
+            
+            <label for="input_prompt">Input Prompt</label>
+            <div class="help">Paste the raw prompt or source material here.</div>
+            <textarea id="input_prompt" name="input_prompt" rows="3" placeholder="Paste the raw prompt or source material here."></textarea>
+            
+            <label for="context">Context</label>
+            <div class="help">Any background information the model needs to know.</div>
+            <textarea id="context" name="context" rows="3" placeholder="Any background information the model needs to know."></textarea>
+            
+            <label for="constraints">Constraints</label>
+            <div class="help">List any length, tone, privacy, safety, budget, or latency limits.</div>
+            <textarea id="constraints" name="constraints" rows="3" placeholder="List any length, tone, privacy, safety, budget, or latency limits."></textarea>
+            
+            <label for="audience">Audience</label>
+            <div class="help">Who is the output for?</div>
+            <textarea id="audience" name="audience" rows="3" placeholder="Who is the output for?"></textarea>
+            
+            <label for="desired_output_style">Desired Output Style</label>
+            <div class="help">What should the response feel like?</div>
+            <textarea id="desired_output_style" name="desired_output_style" rows="3" placeholder="What should the response feel like?"></textarea>
+            
+            <label for="must_include">Must Include</label>
+            <div class="help">Anything that must stay in the final prompt/output.</div>
+            <textarea id="must_include" name="must_include" rows="3" placeholder="Anything that must stay in the final prompt/output."></textarea>
+            
+            <label for="must_avoid">Must Avoid</label>
+            <div class="help">Anything that must not appear.</div>
+            <textarea id="must_avoid" name="must_avoid" rows="3" placeholder="Anything that must not appear."></textarea>
+            
+            <label for="quality_bar">Quality Bar</label>
+            <div class="help">What does a good result look like?</div>
+            <textarea id="quality_bar" name="quality_bar" rows="3" placeholder="What does a good result look like?"></textarea>
+            
+            <label for="optional">Optional</label>
+            <div class="help">Examples, fallback behavior, keywords to preserve, or notes.</div>
+            <textarea id="optional" name="optional" rows="3" placeholder="Examples, fallback behavior, keywords to preserve, or notes."></textarea>
+            
         <div class="actions">
           <button class="primary" type="submit">Build prompt</button>
           <button class="ghost" type="button" id="fillDemo">Fill demo</button>
@@ -171,7 +135,6 @@
         </div>
       </form>
 
-      <div id="status" class="status"></div>
       <div class="preview" id="previewWrap" hidden>
         <h2>Preview</h2>
         <pre id="preview"></pre>
@@ -186,61 +149,41 @@
       TELEGRAM.expand();
     }
 
-    const fields = [
-      'goal', 'model', 'task_type', 'input_prompt', 'context', 'constraints',
-      'audience', 'desired_output_style', 'must_include', 'must_avoid', 'quality_bar', 'optional'
-    ];
-    const status = document.getElementById('status');
-    const previewWrap = document.getElementById('previewWrap');
-    const preview = document.getElementById('preview');
+    const fieldOrder = ["goal", "model", "task_type", "input_prompt", "context", "constraints", "audience", "desired_output_style", "must_include", "must_avoid", "quality_bar", "optional"];
 
     function payloadFromForm() {
       const data = {};
-      for (const key of fields) {
+      for (const key of fieldOrder) {
         const el = document.getElementById(key);
-        data[key] = el ? el.value.trim() : '';
+        data[key] = el ? el.value.trim() : "";
       }
       return data;
     }
 
     function setForm(data) {
-      for (const key of fields) {
+      for (const key of fieldOrder) {
         const el = document.getElementById(key);
         if (!el) continue;
-        el.value = data[key] || '';
+        el.value = data[key] || "";
       }
     }
 
-    function titleFor(key) {
-      const map = {
-        goal: 'Goal', model: 'Model', task_type: 'Task Type', input_prompt: 'Input Prompt',
-        context: 'Context', constraints: 'Constraints', audience: 'Audience',
-        desired_output_style: 'Desired Output Style', must_include: 'Must Include',
-        must_avoid: 'Must Avoid', quality_bar: 'Quality Bar', optional: 'Optional'
-      };
-      return map[key] || key;
+    async function buildPrompt(data) {
+      const res = await fetch('/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('submit failed');
+      return await res.json();
     }
 
-    function renderPrompt(data) {
-      const sections = [];
-      for (const key of fields) {
-        const value = (data[key] || '').trim();
-        if (!value) continue;
-        sections.push(`## ${titleFor(key)}\n${value}`);
-      }
-      sections.push('## Final Instruction\nRewrite / improve / answer the prompt above according to the requirements.');
-      return sections.join('\n\n');
-    }
-
-    document.getElementById('form').addEventListener('submit', (ev) => {
+    document.getElementById('form').addEventListener('submit', async (ev) => {
       ev.preventDefault();
       const data = payloadFromForm();
-      const prompt = renderPrompt(data);
-      preview.textContent = prompt;
-      previewWrap.hidden = false;
-      status.innerHTML = TELEGRAM
-        ? '<div class="ok">Ready to send to Telegram.</div>'
-        : '<div class="warn">Open this page inside Telegram to send it back to the bot.</div>';
+      const out = await buildPrompt(data);
+      document.getElementById('preview').textContent = out.prompt;
+      document.getElementById('previewWrap').hidden = false;
       if (TELEGRAM) {
         TELEGRAM.sendData(JSON.stringify(data));
       }
@@ -249,25 +192,24 @@
     document.getElementById('fillDemo').addEventListener('click', () => {
       setForm({
         goal: 'Improve a prompt for clarity and reliability',
-        model: 'gpt-5.5',
+        model: 'Auto',
         task_type: 'analysis',
         input_prompt: 'Draft a better prompt from this rough idea',
-        context: 'Private Telegram bot, concise output, privacy-safe wording',
+        context: 'Private-chat bot, concise output, privacy-safe wording',
         constraints: 'No group features, keep it Telegram-friendly',
         audience: 'Busy operator',
         desired_output_style: 'concise and structured',
         must_include: 'copy-friendly final prompt',
         must_avoid: 'fluff, speculation',
         quality_bar: 'clear, actionable, ready to use',
-        optional: 'Mention the exact model names only'
+        optional: 'Mention the exact model names only',
       });
     });
 
     document.getElementById('clearBtn').addEventListener('click', () => {
       setForm({});
-      previewWrap.hidden = true;
-      preview.textContent = '';
-      status.textContent = '';
+      document.getElementById('previewWrap').hidden = true;
+      document.getElementById('preview').textContent = '';
     });
   </script>
 </body>
