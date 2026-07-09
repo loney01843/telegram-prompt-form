@@ -14,8 +14,8 @@ fi
 
 : "${TELEGRAM_BOT_TOKEN:?Set TELEGRAM_BOT_TOKEN in the environment or .env}"
 
-# Stable public URL for Telegram Web App.
-export TELEGRAM_WEB_APP_URL="${TELEGRAM_WEB_APP_URL:-https://promptform-dave.loca.lt}"
+# Private Web App URL for Telegram. This should point at a tailnet-only HTTPS endpoint.
+export TELEGRAM_WEB_APP_URL="${TELEGRAM_WEB_APP_URL:-https://brsvr.tail5967a1.ts.net}"
 export WEBAPP_PORT="${WEBAPP_PORT:-8000}"
 
 # Activate project environment.
@@ -31,17 +31,13 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# Start the tunnel using Cloudflare Tunnel (no account required).
-# The `trycloudflare.com` URL is HTTPS and suitable for Telegram Web Apps.
-"$HOME/.local/bin/cloudflared" tunnel --url "http://127.0.0.1:$WEBAPP_PORT" --no-autoupdate >/tmp/telegram-prompt-form-tunnel.log 2>&1 &
-TUNNEL_PID=$!
+# Expose the local Web App only to the tailnet using Tailscale Serve.
+# This is private: only authenticated devices on the tailnet can reach it.
+tailscale serve reset >/tmp/telegram-prompt-form-tailscale.log 2>&1 || true
+tailscale serve --yes --bg --https=443 "http://127.0.0.1:$WEBAPP_PORT" >/tmp/telegram-prompt-form-tailscale.log 2>&1
 
-# Give the tunnel a moment to come up and then print the public URL if available.
-sleep 6
-if grep -Eq 'https://[^ ]+\.trycloudflare\.com' /tmp/telegram-prompt-form-tunnel.log; then
-  URL=$(grep -Eo 'https://[^ ]+\.trycloudflare\.com' /tmp/telegram-prompt-form-tunnel.log | tail -n 1)
-  echo "Web App URL: $URL"
-fi
+# Give the local web app a moment to come up.
+sleep 3
 
 # Start the bot with the same env.
 python bot.py

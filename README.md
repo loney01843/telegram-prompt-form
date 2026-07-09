@@ -37,8 +37,8 @@ A small **aiogram** bot that turns Telegram into a privacy-safe prompt intake fo
    ```
 
 ## Web App
-- Live URL: https://loney01843.github.io/telegram-prompt-form/
-- This is the richer Telegram Web App UI.
-- The page sends structured form data back to the bot via Telegram `web_app_data`.
-- If Telegram refuses to open it, set the bot domain in BotFather to `loney01843.github.io`.
+- Private tailnet URL: `https://brsvr.tail5967a1.ts.net`
+- The page is only reachable from devices on your Tailscale network.
+- The bot sends structured form data back via Telegram `web_app_data`.
+- `/start` shows the Web App button in private chat.
 
