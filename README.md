@@ -36,8 +36,8 @@ A small **aiogram** bot that turns Telegram into a privacy-safe prompt intake fo
    ```
 
 ## Web App
-- Optional richer UI for private-chat use.
-- Run `python webapp.py` to start the local backend.
-- Set `TELEGRAM_WEB_APP_URL` to the HTTPS URL where the app is hosted so the bot can show the `Open Web App` button.
-- The Web App posts its form payload back to the bot via Telegram `web_app_data`.
+- Live URL: https://loney01843.github.io/telegram-prompt-form/
+- This is the richer Telegram Web App UI.
+- The page sends structured form data back to the bot via Telegram `web_app_data`.
+- If Telegram refuses to open it, set the bot domain in BotFather to `loney01843.github.io`.
 
