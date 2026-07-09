@@ -1,0 +1,111 @@
+# Telegram prompt-form bot configuration.
+#
+# Privacy note:
+# - Example text is profile-specific but generated from explicit preferences only.
+# - The bot must never expose raw history or private data from other profiles.
+
+bot:
+  command_name: promptform
+  review_required: true
+
+models:
+  default_list:
+    # Fallback only: the bot refreshes the usable model list at runtime.
+    - GPT-4.1
+    - Claude Sonnet 4
+    - Gemini 2.5 Pro
+    - Gemini 2.5 Flash
+    - Qwen2.5
+    - Llama 3.1
+    - Image model
+    - Code model
+
+profiles:
+  default:
+    label: Default
+    available_models:
+      - GPT-4.1
+      - Claude Sonnet 4
+      - Gemini 2.5 Pro
+      - Gemini 2.5 Flash
+      - Qwen2.5
+      - Llama 3.1
+      - Image model
+      - Code model
+    tone_hint: concise, neutral, privacy-safe
+    example_style: general
+    defaults:
+      task_type: analysis
+      desired_output_style: concise, technical
+    example_hints:
+      goal: "Improve this prompt for clarity"
+      model: "Choose the model you will actually use"
+      task_type: "analysis, writing, coding, image generation, planning"
+      input_prompt: "Paste the raw prompt here"
+      constraints: "Length, tone, style, privacy, budget, latency"
+      audience: "Who will read or use the result"
+      desired_output_style: "concise, technical, friendly, formal, executive"
+      must_include: "Key facts, terms, sections, or behaviors that must remain"
+      must_avoid: "Anything not wanted in the output"
+      quality_bar: "What a good answer should achieve"
+      optional: "Examples, fallback behavior, keywords to preserve"
+
+  technical:
+    label: Technical
+    available_models:
+      - GPT-4.1
+      - Claude Sonnet 4
+      - Gemini 2.5 Pro
+      - Gemini 2.5 Flash
+      - Qwen2.5
+      - Llama 3.1
+      - Image model
+      - Code model
+    tone_hint: concise, technical, action-oriented
+    example_style: technical
+    defaults:
+      task_type: coding
+      desired_output_style: concise, technical
+    example_hints:
+      goal: "Rewrite this for better code-generation reliability"
+      model: "Pick the exact model name from the list"
+      task_type: "coding, debugging, architecture, analysis, review"
+      input_prompt: "Paste code, logs, or the original prompt"
+      constraints: "No speculation, preserve APIs, output as Markdown, keep under N tokens"
+      audience: "Developer, reviewer, or automation tool"
+      desired_output_style: "structured, terse, implementation-focused"
+      must_include: "Function names, constraints, interfaces, acceptance criteria"
+      must_avoid: "Hallucinated APIs, extra commentary, unsafe changes"
+      quality_bar: "A prompt that produces correct, testable output"
+      optional: "Known failure modes, examples to imitate, examples to avoid"
+
+  creative:
+    label: Creative
+    available_models:
+      - GPT-4.1
+      - Claude Sonnet 4
+      - Gemini 2.5 Pro
+      - Gemini 2.5 Flash
+      - Qwen2.5
+      - Llama 3.1
+      - Image model
+      - Code model
+    tone_hint: vivid, clear, composition-aware
+    example_style: creative
+    defaults:
+      task_type: image generation
+      desired_output_style: vivid, concise
+    example_hints:
+      goal: "Make this image prompt more precise and coherent"
+      model: "Choose the model intended for image generation"
+      task_type: "image generation, editing, style transfer"
+      input_prompt: "Paste the source prompt exactly as written"
+      constraints: "Preserve subject, composition, style, and key attributes"
+      audience: "Image model or creative workflow"
+      desired_output_style: "clear, vivid, cinematic, concise"
+      must_include: "Subject, action, camera/composition, style, materials, lighting"
+      must_avoid: "Contradictions, unnecessary verbosity, private details"
+      quality_bar: "A prompt that is more precise without changing intent"
+      optional: "Style references, negative prompts, fallback if uncertain"
+
+chat_profile_map: {}
